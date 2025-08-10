@@ -1,4 +1,4 @@
-import { serviceCommon } from '@/utils/service-common'
+import { serviceCommon } from '@/services/service-common'
 
 export const update = (data) => {
   return serviceCommon({
