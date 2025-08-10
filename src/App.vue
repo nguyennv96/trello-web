@@ -2,7 +2,7 @@
 import { reactive, useTemplateRef } from 'vue'
 import { login } from './apis/auth'
 import { update } from './apis/user'
-import { setItem } from './utils/local-storage'
+import '@/assets/main.css'
 
 let file = null
 
@@ -12,8 +12,6 @@ const handleLogin = async () => {
     password: 'Bicatxo@1996',
   })
   if (res.status === 200) {
-    setItem('access-token', res.data.accessToken)
-    setItem('refresh-token', res.data.refreshToken)
   }
   console.log(res)
 }
@@ -30,6 +28,16 @@ const handleOnChange = (event) => {
 </script>
 
 <template>
+  <h1 class="text-3xl font-bold underline">Hello world!</h1>
+  <div class="bg-white p-6 rounded-2xl shadow-lg w-80">
+    <h1 class="text-2xl font-bold text-gray-800 mb-4 text-center">Hello Tailwind!</h1>
+    <p class="text-gray-600 mb-6 text-center">Đây là đoạn code test Tailwind CSS.</p>
+    <button
+      class="w-full bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-lg transition duration-200"
+    >
+      Bấm vào tôi
+    </button>
+  </div>
   <h1>You did it!</h1>
   <p>
     Visit <a href="https://vuejs.org/" target="_blank" rel="noopener">vuejs.org</a> to read the
