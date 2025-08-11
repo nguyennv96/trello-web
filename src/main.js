@@ -1,5 +1,7 @@
 import { createApp } from 'vue'
 import App from './App.vue'
 import { store } from '@/store/store'
+import ElementPlus from 'element-plus'
+import 'element-plus/dist/index.css'
 
-createApp(App).use(store).mount('#app')
+createApp(App).use(store).use(ElementPlus).mount('#app')
