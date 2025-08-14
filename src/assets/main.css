@@ -1,1 +1,4 @@
 @import 'tailwindcss';
+.el-loading-text {
+  color: #dd7b06 !important;
+}
