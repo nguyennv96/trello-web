@@ -1,11 +1,15 @@
 <script setup>
 import { login } from '@/apis/auth'
 import '@/assets/main.css'
+import { StatusCodes } from '@/constants/status-code'
 import { getLoading } from '@/utils/el-loading'
 import notification from '@/utils/el-notification'
 import { reactive } from 'vue'
-import { RouterLink } from 'vue-router'
+import { RouterLink, useRouter } from 'vue-router'
+import { useStore } from 'vuex'
 
+const store = useStore()
+const router = useRouter()
 const objLogin = reactive({
   email: null,
   password: null,
@@ -19,8 +23,13 @@ const handleLogin = async () => {
     }
     loading = getLoading()
     const res = await login(objLogin)
-    if (res.status === 200) {
+    if (res.status === StatusCodes.OK) {
+      let userInfo = { ...res.data }
+      delete userInfo.accessToken
+      delete userInfo.refreshToken
       // update store auth, user, redirect to dashboard
+      store.commit('user/set', userInfo)
+      router.replace('/dashboard')
       notification.success('Đăng nhập thành công')
     }
   } catch (error) {
@@ -28,7 +37,7 @@ const handleLogin = async () => {
       error?.response?.data?.message || error.message || 'Đăng nhập không thành công',
     )
   } finally {
-    loading.close()
+    if (loading) loading.close()
   }
 }
 </script>

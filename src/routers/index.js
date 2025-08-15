@@ -5,7 +5,7 @@ import App from '@/App.vue'
 import Signup from '@/views/signup.vue'
 import Dashboard from '@/views/dashboard.vue'
 import VerifyEmail from '@/views/verify-email.vue'
-
+import { store } from '@/store/store'
 const routes = [
   {
     path: '/',
@@ -42,7 +42,8 @@ export const router = createRouter({
 })
 router.beforeEach((to, from, next) => {
   const whiteList = ['Login', 'Signup', 'Verify']
-  const isAuthenticated = false
+  const isAuthenticated = store.getters['user/isAuth']
+  console.log(isAuthenticated)
 
   if (!whiteList.includes(to.name) && !isAuthenticated) {
     next({ name: 'Login' })
