@@ -9,3 +9,6 @@ export const signup = (data) => {
 export const verify = (data) => {
   return instance.put('/users/verify', data)
 }
+export const logout = () => {
+  return instance.delete('/users/logout')
+}
