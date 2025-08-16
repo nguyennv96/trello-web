@@ -5,11 +5,14 @@ import App from '@/App.vue'
 import Signup from '@/views/signup.vue'
 import Dashboard from '@/views/dashboard.vue'
 import VerifyEmail from '@/views/verify-email.vue'
+import HomeLayout from '@/layouts/home-layout.vue'
 import { store } from '@/store/store'
+import AuthLayout from '@/layouts/auth-layout.vue'
+import Board from '@/views/board.vue'
 const routes = [
   {
     path: '/',
-    component: App,
+    component: AuthLayout,
     redirect: '/login',
     children: [
       {
@@ -27,10 +30,21 @@ const routes = [
         path: 'account/verification',
         component: VerifyEmail,
       },
+    ],
+  },
+  {
+    path: '/',
+    component: HomeLayout,
+    children: [
       {
         name: 'Dashboard',
-        path: 'dashboard',
+        path: '',
         component: Dashboard,
+      },
+      {
+        name: 'Boards',
+        path: 'boards',
+        component: Board,
       },
     ],
   },

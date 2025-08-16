@@ -29,7 +29,7 @@ const handleLogin = async () => {
       delete userInfo.refreshToken
       // update store auth, user, redirect to dashboard
       store.commit('user/set', userInfo)
-      router.replace('/dashboard')
+      router.replace({ name: 'Dashboard' })
       notification.success('Đăng nhập thành công')
     }
   } catch (error) {
@@ -48,7 +48,7 @@ const handleLogin = async () => {
       <img width="80%" src="@/assets/images/trello-left.svg" alt="" />
     </div>
     <div
-      class="basis-0 grow-[2] flex justify-center text-center items-start pt-[5%] [@media(min-width:1920px)]:pt-[9%]"
+      class="basis-0 grow-[2] flex justify-center text-center items-start pt-[5%] [@media(min-width:1920px)]:pt-[7%]"
     >
       <div class="w-[40%] shadow-xl p-10">
         <svg width="150px" class="mx-auto mb-5" viewBox="0 0 113 32">
