@@ -3,7 +3,7 @@ import { logout } from '@/apis/auth'
 import { StatusCodes } from '@/constants/status-code'
 import { getLoading } from '@/utils/el-loading'
 import notification from '@/utils/el-notification'
-import { ref } from 'vue'
+import { onMounted, onUnmounted, ref } from 'vue'
 import { RouterView, useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 const isOpen = ref(false)
@@ -27,6 +27,27 @@ const handleLogout = async () => {
     )
   } finally {
     if (loading) loading.close()
+  }
+}
+onMounted(() => {
+  window.addEventListener('click', handleClickOutsidev2)
+})
+onUnmounted(() => {
+  window.removeEventListener('click', handleClickOutsidev2)
+})
+const handleToggleMenu = () => {
+  isOpen.value = !isOpen.value
+}
+const handleClickOutside = (event) => {
+  if (!event.target.closest('#avatar')) {
+    isOpen.value = false
+  }
+}
+const handleClickOutsidev2 = (e) => {
+  console.log(menuRef.value)
+
+  if (menuRef.value && !menuRef.value.contains(e.target)) {
+    isOpen.value = false
   }
 }
 </script>
@@ -142,21 +163,25 @@ const handleLogout = async () => {
         </button>
 
         <!-- Avatar -->
-        <div class="relative">
+        <div ref="menuRef" class="relative w-8 h-8" id="avatar">
           <button
-            class="w-8 h-8 rounded-full bg-gray-300 overflow-hidden focus:outline-none"
-          ></button>
+            @click="handleToggleMenu"
+            class="w-8 h-8 rounded-full overflow-hidden focus:outline-none bg-amber-400 font-semibold"
+          >
+            {{ String(store.state.user.user.displayName).charAt(0).toUpperCase() }}
+          </button>
           <div
-            class="shadow-lg absolute right-0 top-[56px] bg-white z-50 rounded-sm pt-4 w-[200px]"
+            class="shadow-xl absolute right-0 top-[56px] bg-white z-50 rounded-sm pt-4 w-[200px]"
+            v-if="isOpen"
           >
             <div>
               <h5 class="text-sm font-medium px-2 mb-1">TÀI KHOẢN</h5>
               <div class="flex justify-between px-2 mb-1">
                 <!-- <img src="" alt="" /> -->
                 <div
-                  class="avatar w-8 h-8 mr-5 bg-amber-400 font-semibold flex justify-center items-center rounded-[50%]"
+                  class="avatar w-8 h-8 bg-amber-400 font-semibold flex justify-center items-center rounded-[50%]"
                 >
-                  N
+                  {{ String(store.state.user.user.displayName).charAt(0).toUpperCase() }}
                 </div>
                 <div>
                   <p class="font-medium text-sm">{{ store.state.user.user.displayName }}</p>
@@ -165,7 +190,7 @@ const handleLogout = async () => {
               </div>
               <ul class="mb-2">
                 <li class="hover:bg-gray-100 px-2 mb-1">
-                  <RouterLink class="flex justify-between py-2">
+                  <a class="flex justify-between py-2">
                     <p class="text-sm">Quản lý tài khoản</p>
                     <svg
                       width="16px"
@@ -187,7 +212,7 @@ const handleLogout = async () => {
                         ></path>
                       </g>
                     </svg>
-                  </RouterLink>
+                  </a>
                 </li>
                 <hr class="text-gray-300 mb-1" />
                 <li @click="handleLogout" class="hover:bg-gray-100 px-2">
