@@ -8,8 +8,12 @@ import { RouterView, useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 const isOpen = ref(false)
 const menuRef = ref(null)
+const menuBoard = ref(null)
 const store = useStore()
 const router = useRouter()
+
+const isOpenSelectBoardType = ref(false)
+const isOpenMenuCreateBoard = ref(false)
 
 const handleLogout = async () => {
   let loading
@@ -44,11 +48,36 @@ const handleClickOutside = (event) => {
   }
 }
 const handleClickOutsidev2 = (e) => {
-  console.log(menuRef.value)
+  console.log(menuBoard.value && !menuBoard.value.contains(e.target))
+  console.log(menuBoard.value)
 
-  if (menuRef.value && !menuRef.value.contains(e.target)) {
+  if (
+    menuRef.value &&
+    !menuRef.value.contains(e.target) &&
+    menuBoard.value &&
+    !menuBoard.value.contains(e.target)
+  ) {
     isOpen.value = false
+    isOpenMenuCreateBoard.value = false
+    isOpenSelectBoardType.value = false
   }
+}
+const handleToggleMenuSelectBoardType = () => {
+  isOpenSelectBoardType.value = !isOpenSelectBoardType.value
+}
+const handleCloseMenuSelectBoardType = () => {
+  isOpenSelectBoardType.value = false
+}
+const handleOpenMenuSelectBoardType = () => {
+  isOpenMenuCreateBoard.value = false
+  isOpenSelectBoardType.value = true
+}
+const handleCloseMenuCreateBoard = () => {
+  isOpenMenuCreateBoard.value = false
+}
+const handleOpenMenuCreateBoard = () => {
+  handleCloseMenuSelectBoardType()
+  isOpenMenuCreateBoard.value = true
 }
 </script>
 <template>
@@ -138,7 +167,212 @@ const handleClickOutsidev2 = (e) => {
             placeholder="Tìm kiếm..."
             class="w-full rounded-xs max-w-md mr-1 px-3 py-1.5 pl-7 border border-gray-200 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
-          <button class="text-xs bg-blue-500 text-white p-1.5 rounded-xs">Tạo mới</button>
+          <div ref="menuBoard" class="inline-block relative">
+            <button
+              @click="handleToggleMenuSelectBoardType"
+              class="text-xs bg-blue-500 text-white p-1.5 rounded-xs relative"
+            >
+              Tạo mới
+            </button>
+            <!-- menu lựa chọn tạo bảng -->
+            <div
+              :style="{ visibility: isOpenSelectBoardType ? 'visible' : 'hidden' }"
+              class="w-[300px] absolute bg-white py-3 rounded-sm shadow-2xl right-0 top-10 border-gray-200"
+            >
+              <ul class="text-[#44546f]">
+                <li class="mb-1 px-2 py-2 hover:bg-gray-100">
+                  <button @click="handleOpenMenuCreateBoard">
+                    <span class="font-medium text-sm text-left flex mb-1">
+                      <svg
+                        class="mr-1"
+                        fill="#44546f"
+                        height="16px"
+                        width="16px"
+                        version="1.1"
+                        id="Capa_1"
+                        xmlns="http://www.w3.org/2000/svg"
+                        xmlns:xlink="http://www.w3.org/1999/xlink"
+                        viewBox="0 0 439.117 439.117"
+                        xml:space="preserve"
+                        stroke="#44546f"
+                      >
+                        <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                        <g
+                          id="SVGRepo_tracerCarrier"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                        ></g>
+                        <g id="SVGRepo_iconCarrier">
+                          <g>
+                            <path
+                              d="M352.221,27.923c-0.199-2.606-2.371-4.62-4.985-4.62H137.546c-1.392,0-2.721,0.581-3.667,1.602 c-0.946,1.021-1.424,2.391-1.318,3.779l18.719,245.201c0.199,2.606,2.372,4.62,4.985,4.62h9.78l1.316,16.146 c0.211,2.595,2.379,4.594,4.983,4.594h185.867c5.368,0,10.534-2.264,14.173-6.211s5.476-9.28,5.039-14.63l-0.432-5.305 c-0.211-2.596-2.379-4.595-4.983-4.595h-1.421L352.221,27.923z M142.942,33.303h199.661l17.955,235.201h-199.66L142.942,33.303z M176.953,289.245l-0.875-10.74h16.237l0.058,0.711c0.213,2.613-0.648,5.113-2.425,7.041c-1.777,1.927-4.199,2.989-6.82,2.989 H176.953z M365.031,286.256c-1.776,1.927-4.199,2.989-6.82,2.989H199.995c1.786-3.255,2.633-6.987,2.347-10.74h163.612h1.444 l0.058,0.711C367.669,281.828,366.808,284.328,365.031,286.256z"
+                            ></path>
+                            <path
+                              d="M347.712,261.556c1.393,0,2.722-0.581,3.668-1.602c0.946-1.021,1.424-2.391,1.317-3.779L336.566,44.871 c-0.199-2.606-2.371-4.62-4.985-4.62H155.788c-1.392,0-2.721,0.581-3.667,1.602c-0.946,1.021-1.424,2.391-1.318,3.779 l16.131,211.305c0.199,2.606,2.372,4.62,4.985,4.62H347.712z M161.184,50.251h165.765l15.367,201.305H176.551L161.184,50.251z"
+                            ></path>
+                            <path
+                              d="M373.745,4.62C373.546,2.013,371.374,0,368.76,0L70.356,0.002c-2.614,0-4.787,2.013-4.985,4.62L32.613,433.736 c-0.106,1.388,0.372,2.757,1.318,3.779c0.946,1.021,2.275,1.602,3.667,1.602h39.683c2.614,0,4.787-2.013,4.985-4.62l7.825-102.501 h25.941l7.825,102.499c0.199,2.606,2.372,4.62,4.985,4.62h39.683c1.392,0,2.721-0.581,3.667-1.602 c0.946-1.021,1.424-2.391,1.318-3.779l-7.767-101.74h107.632l-7.767,101.741c-0.106,1.388,0.371,2.757,1.317,3.779 c0.946,1.021,2.275,1.602,3.668,1.602l39.677,0.001c2.614,0,4.786-2.013,4.985-4.62l7.825-102.503h25.943l7.824,102.503 c0.199,2.606,2.371,4.62,4.985,4.62l39.684-0.002c1.393,0,2.722-0.581,3.668-1.602c0.946-1.021,1.424-2.391,1.317-3.779 L373.745,4.62z M74.989,10.002h6.355L49.345,429.117h-6.35L74.989,10.002z M85.458,321.996c-2.614,0-4.787,2.013-4.985,4.62 l-7.825,102.501H59.374l32-419.12h0.078l23.818,311.999H85.458z M101.48,10h6.35l31.995,419.114h-6.351L101.48,10z M282.335,429.115h-6.344l7.414-97.12h6.344L282.335,429.115z M305.639,429.117h-13.274l7.414-97.123h13.275L305.639,429.117z M359.054,331.994h6.35l7.415,97.123h-6.351L359.054,331.994z M382.848,429.114l-7.825-102.5c-0.199-2.606-2.372-4.62-4.985-4.62 H160.348c-1.392,0-2.721,0.581-3.667,1.602c-0.946,1.021-1.424,2.391-1.318,3.779l7.766,101.74h-13.274L117.86,10h246.267 l31.995,419.114H382.848z"
+                            ></path>
+                            <path
+                              d="M90.755,192.899c-2.748-0.221-5.155,1.852-5.366,4.605l-8.177,107.121c-0.21,2.753,1.852,5.156,4.605,5.366 c0.129,0.01,0.258,0.015,0.386,0.015c2.588,0,4.78-1.996,4.98-4.62l8.177-107.121C95.571,195.511,93.509,193.109,90.755,192.899z"
+                            ></path>
+                            <path
+                              d="M99.911,309.991c0.129,0.01,0.258,0.015,0.386,0.015c2.588,0,4.78-1.996,4.98-4.62l2.282-29.895 c0.21-2.753-1.852-5.156-4.605-5.366c-2.744-0.219-5.156,1.852-5.366,4.605l-2.282,29.895 C95.096,307.378,97.158,309.781,99.911,309.991z"
+                            ></path>
+                            <path
+                              d="M240.56,68.785h76.262c2.762,0,5-2.239,5-5s-2.238-5-5-5H240.56c-2.762,0-5,2.239-5,5S237.798,68.785,240.56,68.785z"
+                            ></path>
+                            <path
+                              d="M186.541,245.14h50.841c2.762,0,5-2.239,5-5s-2.238-5-5-5h-50.841c-2.761,0-5,2.239-5,5S183.78,245.14,186.541,245.14z"
+                            ></path>
+                            <path
+                              d="M262.803,235.14h-11.121c-2.762,0-5,2.239-5,5s2.238,5,5,5h11.121c2.762,0,5-2.239,5-5S265.564,235.14,262.803,235.14z"
+                            ></path>
+                            <path
+                              d="M316.821,76.261h-27.009c-2.762,0-5,2.239-5,5s2.238,5,5,5h27.009c2.762,0,5-2.239,5-5S319.583,76.261,316.821,76.261z"
+                            ></path>
+                          </g>
+                        </g>
+                      </svg>
+                      &nbsp; Tạo bảng
+                    </span>
+                    <p class="text-xs text-left">
+                      Một bảng được tạo thành từ các thẻ được sắp xếp trong danh sách. Sử dụng bảng
+                      để quản lý các dự án, theo dõi thông tin, hoặc tổ chức bất cứ việc gì.
+                    </p>
+                  </button>
+                </li>
+                <li class="mb-1 px-2 py-2 hover:bg-gray-100 cursor-not-allowed">
+                  <button class="cursor-not-allowed">
+                    <span class="font-medium text-sm text-left flex mb-1">
+                      <svg
+                        class="mr-1"
+                        width="16px"
+                        height="16px"
+                        viewBox="0 0 21 21"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="#44546f"
+                      >
+                        <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                        <g
+                          id="SVGRepo_tracerCarrier"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                        ></g>
+                        <g id="SVGRepo_iconCarrier">
+                          <g
+                            fill="none"
+                            fill-rule="evenodd"
+                            stroke="#44546f"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            transform="translate(3 3)"
+                          >
+                            <path
+                              d="m14.4978951 12.4978973-.0105089-9.99999996c-.0011648-1.10374784-.8962548-1.99789734-2-1.99789734h-9.99999995c-1.0543629 0-1.91816623.81587779-1.99451537 1.85073766l-.00548463.151365.0105133 10.00000004c.0011604 1.1037478.89625045 1.9978973 1.99999889 1.9978973h9.99999776c1.0543618 0 1.9181652-.8158778 1.9945143-1.8507377z"
+                            ></path>
+                            <path d="m4.5 4.5v9.817"></path>
+                            <path d="m7-2v14" transform="matrix(0 1 -1 0 12.5 -2.5)"></path>
+                          </g>
+                        </g>
+                      </svg>
+                      &nbsp;Bắt đầu với mẫu
+                    </span>
+                    <p class="text-xs text-left">Bắt đầu nhanh hơn với mẫu bảng.</p>
+                  </button>
+                </li>
+              </ul>
+            </div>
+            <!-- form tạo bảng -->
+            <div
+              :style="{ visibility: isOpenMenuCreateBoard ? 'visible' : 'hidden' }"
+              class="w-[300px] absolute bg-white py-3 rounded-sm shadow-2xl right-0 top-10 border-gray-200 px-3"
+            >
+              <header class="flex justify-between">
+                <button @click="handleOpenMenuSelectBoardType">
+                  <svg
+                    width="20px"
+                    height="20px"
+                    viewBox="0 0 1024 1024"
+                    fill="#44546f"
+                    class="icon"
+                    version="1.1"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                    <g
+                      id="SVGRepo_tracerCarrier"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    ></g>
+                    <g id="SVGRepo_iconCarrier">
+                      <path
+                        d="M669.6 849.6c8.8 8 22.4 7.2 30.4-1.6s7.2-22.4-1.6-30.4l-309.6-280c-8-7.2-8-17.6 0-24.8l309.6-270.4c8.8-8 9.6-21.6 2.4-30.4-8-8.8-21.6-9.6-30.4-2.4L360.8 480.8c-27.2 24-28 64-0.8 88.8l309.6 280z"
+                        fill=""
+                      ></path>
+                    </g>
+                  </svg>
+                </button>
+
+                <h5 class="text-[#44546f] font-semibold text-sm">Tạo bảng</h5>
+                <button @click="handleCloseMenuCreateBoard">
+                  <svg
+                    width="20px"
+                    height="20px"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                    <g
+                      id="SVGRepo_tracerCarrier"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    ></g>
+                    <g id="SVGRepo_iconCarrier">
+                      <g id="Menu / Close_SM">
+                        <path
+                          id="Vector"
+                          d="M16 16L12 12M12 12L8 8M12 12L16 8M12 12L8 16"
+                          stroke="#44546f"
+                          stroke-width="2"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                        ></path>
+                      </g>
+                    </g>
+                  </svg>
+                </button>
+              </header>
+              <article class="text-[#44546f]">
+                <div>
+                  <label class="font-semibold text-xs" for=""
+                    >Tiêu đề bảng <span class="text-red-500">*</span></label
+                  ><br />
+                  <input
+                    class="border-gray-200 border py-2 px-2 text-xs w-full rounded-sm focus:border-blue-600 outline-none"
+                    type="text"
+                  /><br />
+                  <span class="text-xs">👋 Tiêu đề bảng là bắt buộc</span>
+                </div>
+                <div>
+                  <label class="font-semibold text-xs" for=""
+                    >Quyền xem <span class="text-red-500">*</span></label
+                  ><br />
+                  <input
+                    type="text"
+                    class="border-gray-200 border py-2 px-2 text-xs w-full rounded-sm focus:border-blue-600 outline-none"
+                  /><br />
+                  <span class="text-xs">👋 Tiêu đề bảng là bắt buộc</span>
+                </div>
+                <div class="mt-1">
+                  <button class="bg-blue-600 text-white w-full py-1 text-sm rounded-sm">
+                    Tạo mới
+                  </button>
+                </div>
+              </article>
+            </div>
+          </div>
         </div>
       </div>
 

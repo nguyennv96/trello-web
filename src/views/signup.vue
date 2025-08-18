@@ -126,7 +126,7 @@ const handleRegister = async () => {
           <img width="25px" src="@/assets/images/slack-logo.svg" />&nbsp; Slack
         </button>
         <RouterLink to="/login" class="decoration-1 underline text-blue-600 text-xs"
-          >Bạn đã có tài khoản Atlassian? >&nbsp;&nbsp;Đăng nhập</RouterLink
+          >Bạn đã có tài khoản Atlassian? &nbsp;&nbsp;Đăng nhập</RouterLink
         >
         <hr class="text-gray-400 mt-3 mb-3" />
         <svg
