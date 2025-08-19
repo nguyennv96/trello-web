@@ -21,7 +21,7 @@ onMounted(async () => {
 })
 </script>
 <template>
-  <h1 class="mb-5 font-semibold">Danh sách bảng của bạn</h1>
+  <h1 class="mb-5 font-semibold text-[#44546f]">Danh sách bảng của bạn</h1>
   <div v-if="boards.length > 0" class="grid grid-cols-5 gap-5">
     <BoardTile
       v-for="(board, index) in boards"
@@ -31,7 +31,7 @@ onMounted(async () => {
     />
   </div>
   <div v-else>
-    <p class="italic">Không có dữ liệu bảng</p>
+    <p class="italic text-[#44546f]">Không có dữ liệu bảng</p>
   </div>
 </template>
 <style scoped></style>

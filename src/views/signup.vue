@@ -32,7 +32,7 @@ const handleRegister = async () => {
   } catch (error) {
     // console.log(error)
     notification.error(
-      error?.response?.data?.message || error.message || 'Đăng ký không thành công',
+      error?.response?.data?.message || error?.message || 'Đăng ký không thành công',
     )
   } finally {
     loading.close()

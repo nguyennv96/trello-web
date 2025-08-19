@@ -1,4 +1,4 @@
-import { listBoard } from '@/apis/board'
+import { createBoard, listBoard } from '@/apis/board'
 let emptyState = {}
 const board = {
   namespaced: true,
@@ -10,7 +10,7 @@ const board = {
     setBoards(state, boards) {
       state.boards = boards
     },
-    setCurrentBoards(state, currentBoard) {
+    setCurrentBoard(state, currentBoard) {
       state.currentBoard = currentBoard
     },
   },
@@ -20,6 +20,15 @@ const board = {
       try {
         const res = await listBoard()
         commit('setBoards', res.data.boards)
+      } catch (error) {
+        throw error
+      }
+    },
+    async createBoard({ dispatch, commit }, board) {
+      try {
+        const res = await createBoard(board)
+        await dispatch('fetchBoard')
+        commit('setCurrentBoard', res.data)
       } catch (error) {
         throw error
       }

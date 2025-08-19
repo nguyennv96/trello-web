@@ -8,7 +8,7 @@ const props = defineProps(['backgroundImg', 'title'])
       class="p-4 shadow bg-cover bg-center h-[70%] rounded-tl-lg rounded-tr-lg"
       :style="{ backgroundImage: `url(${props.backgroundImg || bgBoardDefault})` }"
     ></div>
-    <h3 class="text-blue-900 font-medium text-sm p-2">
+    <h3 class="text-[#44546f] font-medium text-sm p-2">
       {{ props.title }}
     </h3>
   </div>
