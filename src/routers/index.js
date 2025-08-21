@@ -9,6 +9,7 @@ import HomeLayout from '@/layouts/home-layout.vue'
 import { store } from '@/store/store'
 import AuthLayout from '@/layouts/auth-layout.vue'
 import Board from '@/views/board.vue'
+import Profile from '@/views/profile.vue'
 const routes = [
   {
     path: '/',
@@ -45,6 +46,11 @@ const routes = [
         name: 'Boards',
         path: 'boards',
         component: Board,
+      },
+      {
+        name: 'Profile',
+        path: 'profile',
+        component: Profile,
       },
     ],
   },

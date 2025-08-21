@@ -438,31 +438,47 @@ const handleCreateBoard = () => {
       <div ref="menuRef" class="relative w-8 h-8" id="avatar">
         <button
           @click="handleToggleMenu"
-          class="w-8 h-8 rounded-full overflow-hidden focus:outline-none bg-amber-400 font-semibold"
+          v-if="!store.state.user.user.avatar"
+          class="avatar w-8 h-8 bg-amber-400 font-semibold flex justify-center items-center rounded-[50%]"
         >
           {{ String(store.state.user.user.displayName).charAt(0).toUpperCase() }}
         </button>
+        <button
+          @click="handleToggleMenu"
+          v-else
+          class="avatar w-8 h-8 flex justify-center items-center rounded-[50%] bg-center bg-cover"
+          :style="{ backgroundImage: `url(${store.state.user.user.avatar})` }"
+        ></button>
         <div
           class="shadow-xl absolute right-0 top-[56px] bg-white z-50 rounded-sm pt-4 w-[200px] text-[#44546f]"
           v-if="isOpen"
         >
           <div>
             <h5 class="text-sm font-semibold px-2 mb-1">TÀI KHOẢN</h5>
-            <div class="flex justify-between px-2 mb-1">
-              <!-- <img src="" alt="" /> -->
+            <div class="flex justify-between px-2 mb-1 gap-2">
               <div
+                v-if="!store.state.user.user.avatar"
                 class="avatar w-8 h-8 bg-amber-400 font-semibold flex justify-center items-center rounded-[50%]"
               >
                 {{ String(store.state.user.user.displayName).charAt(0).toUpperCase() }}
               </div>
-              <div>
-                <p class="font-semibold text-sm">{{ store.state.user.user.displayName }}</p>
-                <span class="text-xs">{{ store.state.user.user.displayName }}</span>
+              <div
+                v-else
+                class="avatar w-8 h-8 flex justify-center items-center rounded-[50%] bg-center bg-cover"
+                :style="{ backgroundImage: `url(${store.state.user.user.avatar})` }"
+              ></div>
+              <div class="flex-1 min-w-0">
+                <p class="font-semibold text-sm overflow-hidden text-ellipsis">
+                  {{ store.state.user.user.displayName }}
+                </p>
+                <span class="text-xs overflow-hidden text-ellipsis block">{{
+                  store.state.user.user.displayName
+                }}</span>
               </div>
             </div>
             <ul class="mb-2">
               <li class="hover:bg-gray-100 px-2 mb-1">
-                <a class="flex justify-between py-2">
+                <a href="/profile" target="_blank" class="flex justify-between py-2">
                   <p class="text-sm">Quản lý tài khoản</p>
                   <svg
                     width="16px"

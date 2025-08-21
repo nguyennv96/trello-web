@@ -1,3 +1,4 @@
+import { update } from '@/apis/user'
 import { getItem, removeItem, setItem } from '@/utils/local-storage'
 
 let initState = getItem('user')
@@ -35,6 +36,16 @@ const user = {
     set(state, newUser) {
       state.user = newUser
       setItem('user', newUser)
+    },
+  },
+  actions: {
+    async update({ commit, state }, profile) {
+      try {
+        const res = await update(profile)
+        commit('set', res.data)
+      } catch (error) {
+        throw error
+      }
     },
   },
   getters: {
