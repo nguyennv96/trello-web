@@ -31,6 +31,16 @@ const handleUpdateProfile = async () => {
   }
 }
 
+const handleCancel = () => {
+  console.log('cancel')
+  value.value = store.state.user.user[props.field]
+}
+const handleFocusOut = () => {
+  setTimeout(() => {
+    console.log('focus out')
+    isShowAction.value = false
+  }, 250)
+}
 const isShowAction = ref(false)
 </script>
 <template>
@@ -41,13 +51,7 @@ const isShowAction = ref(false)
       <input
         :readonly="props.readonly"
         @focus="isShowAction = true"
-        @focusout="
-          () => {
-            setTimeout(() => {
-              isShowAction = false
-            }, 100)
-          }
-        "
+        @focusout="handleFocusOut"
         v-model="value"
         type="text"
         class="mt-1 mb-5 px-1 py-1.5 hover:bg-gray-100 focus:border-blue-400 focus:border outline-0 text-sm w-full"
@@ -77,7 +81,7 @@ const isShowAction = ref(false)
             </g>
           </svg>
         </button>
-        <button class="w-8 h-8 shadow-md">
+        <button @click="handleCancel" class="w-8 h-8 shadow-md">
           <svg
             class="mx-auto"
             width="20px"

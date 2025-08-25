@@ -10,6 +10,8 @@ import { store } from '@/store/store'
 import AuthLayout from '@/layouts/auth-layout.vue'
 import Board from '@/views/board.vue'
 import Profile from '@/views/profile.vue'
+import BoardLayout from '@/layouts/board-layout.vue'
+import BoardDetail from '@/views/board-detail.vue'
 const routes = [
   {
     path: '/',
@@ -51,6 +53,17 @@ const routes = [
         name: 'Profile',
         path: 'profile',
         component: Profile,
+      },
+    ],
+  },
+  {
+    path: '/',
+    component: BoardLayout,
+    children: [
+      {
+        name: 'BoardDetail',
+        path: 'board/:id',
+        component: BoardDetail,
       },
     ],
   },

@@ -309,7 +309,7 @@ const handleCreateBoard = () => {
           <!-- form tạo bảng -->
           <div
             :style="{ visibility: isOpenMenuCreateBoard ? 'visible' : 'hidden' }"
-            class="w-[300px] absolute bg-white py-3 rounded-sm shadow-2xl right-0 top-10 border-gray-200 px-3"
+            class="w-[300px] absolute bg-white py-3 rounded-sm shadow-2xl right-0 top-10 border-gray-200 px-3 z-10"
           >
             <header class="flex justify-between">
               <button @click="handleOpenMenuSelectBoardType">
