@@ -76,7 +76,6 @@ export const router = createRouter({
 router.beforeEach((to, from, next) => {
   const whiteList = ['Login', 'Signup', 'Verify']
   const isAuthenticated = store.getters['user/isAuth']
-  console.log(isAuthenticated)
 
   if (!whiteList.includes(to.name) && !isAuthenticated) {
     next({ name: 'Login' })

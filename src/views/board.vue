@@ -28,6 +28,8 @@ onMounted(async () => {
       v-bind:key="board._id"
       :background-img="null"
       :title="board.title"
+      :id="board._id"
+      :board="board"
     />
   </div>
   <div v-else>

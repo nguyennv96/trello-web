@@ -1,8 +1,76 @@
 <script setup>
+import Card from '@/components/card.vue'
 import Column from '@/components/column.vue'
+import Dragablee from '@/components/dragablee.vue'
+import { getLoading } from '@/utils/el-loading'
+import notification from '@/utils/el-notification'
+import { computed, onMounted, onUnmounted, reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { useStore } from 'vuex'
 
 const router = useRouter()
+const addColumnRef = ref(null)
+const store = useStore()
+
+const isCreating = ref(false)
+const objColumn = reactive({ boardId: null, title: null })
+
+const currentBoard = computed(() => {
+  return store.state.board.currentBoard
+})
+const getCurrentBoard = async () => {
+  let loading
+  try {
+    console.log('current board', currentBoard.value)
+
+    // if (currentBoard) return
+    loading = getLoading()
+    await store.dispatch('board/getDetail', router.currentRoute.value.params.id)
+  } catch (error) {
+    notification.error(
+      error?.response?.data?.message || error?.message || 'Không lấy được chi tiết bảng',
+    )
+  } finally {
+    if (loading) loading.close()
+  }
+}
+const handleClickOutside = (event) => {
+  if (addColumnRef.value && !addColumnRef.value.contains(event.target)) {
+    handleCloseFormAddColumn()
+  }
+}
+const handleOpenFormAddColumn = () => (isCreating.value = true)
+const handleCloseFormAddColumn = () => (isCreating.value = false)
+const clearCache = () => {
+  objColumn.boardId = null
+  objColumn.title = null
+}
+const handleAddColumn = async () => {
+  let loading
+  try {
+    if (!objColumn.title) {
+      notification.warning('Cần nhập tiêu đề danh sách')
+      return
+    }
+    loading = getLoading()
+    objColumn.boardId = router.currentRoute.value.params.id
+    await store.dispatch('column/createColumn', objColumn)
+    notification.success(`Thêm danh sách thành công`)
+  } catch (error) {
+    notification.error(
+      error?.response?.data?.message || error?.message || 'Không thêm được danh sách',
+    )
+  } finally {
+    clearCache()
+    handleCloseFormAddColumn()
+    if (loading) loading.close()
+  }
+}
+onMounted(async () => {
+  await getCurrentBoard()
+  window.addEventListener('click', handleClickOutside)
+})
+onUnmounted(() => window.addEventListener('click', handleClickOutside))
 console.log(router.currentRoute.value.params)
 </script>
 <template>
@@ -13,9 +81,10 @@ console.log(router.currentRoute.value.params)
       <!-- left -->
       <div class="flex gap-1">
         <input
+          v-if="currentBoard"
           type="text"
-          value="Board Name"
-          class="bg-[#00000052] text-sm font-semibold text-[#172b4d] px-0.5 rounded-sm focus:border-blue-500 focus:border focus:outline-0"
+          v-model="currentBoard.title"
+          class="bg-[#857b7b52] text-sm font-semibold text-[#172b4d] px-0.5 rounded-sm focus:border-blue-500 focus:border focus:outline-0"
         />
         <button class="p-2 hover:bg-[#00000029] cursor-pointer rounded-sm">
           <div class="flex">
@@ -88,23 +157,73 @@ console.log(router.currentRoute.value.params)
       </div>
     </header>
     <div>
-      <div class="flex flex-1 gap-8 overflow-x-auto whitespace-nowrap py-3 px-3">
-        <Column />
-        <Column />
-        <Column />
-        <Column />
-        <Column />
-        <Column />
-        <Column />
-        <Column />
-        <Column />
-        <Column />
-        <Column />
-        <Column />
-        <Column />
-        <Column />
-        <Column />
-      </div>
+      <TransitionGroup name="list">
+        <div class="flex flex-1 gap-8 overflow-x-auto whitespace-nowrap py-3 px-3" key="board">
+          <Column
+            v-if="currentBoard"
+            v-for="column in currentBoard.columns"
+            :column="column"
+            :key="column._id"
+          />
+          <div class="bg-[#f1f2f4] h-fit p-1.5 rounded-md" ref="addColumnRef">
+            <button
+              @click="handleOpenFormAddColumn"
+              :style="{ display: isCreating ? 'none' : 'block' }"
+              class="bg-[#ffffff3d] hover:bg-[#00000029] text-sm text-[#44546f] h-10 rounded-md px-3 py-2 text-left font-medium w-56"
+            >
+              + Thêm danh sách khác
+            </button>
+            <div :style="{ display: isCreating ? 'block' : 'none' }">
+              <textarea
+                class="block mb-1 shadow-sm resize-none bg-white rounded-sm border-blue-500 border-[1px] hover:border-gray-200 text-sm text-[#44546f] focus:outline-none p-2 py-4 w-full max-h-40"
+                placeholder="Nhập tiêu đề hoặc dán liên kết"
+                v-model="objColumn.title"
+              >
+              </textarea>
+              <div class="flex items-center">
+                <button
+                  @click="handleAddColumn"
+                  class="p-2 bg-blue-600 text-white font-medium text-sm rounded-sm"
+                >
+                  Thêm cột</button
+                >&nbsp;
+                <button
+                  @click="handleCloseFormAddColumn"
+                  class="w-8 h-8 font-medium hover:bg-[#091e4224] rounded-sm"
+                >
+                  <svg
+                    class="m-auto"
+                    width="20px"
+                    height="20px"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                    <g
+                      id="SVGRepo_tracerCarrier"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    ></g>
+                    <g id="SVGRepo_iconCarrier">
+                      <g id="Menu / Close_SM">
+                        <path
+                          id="Vector"
+                          d="M16 16L12 12M12 12L8 8M12 12L16 8M12 12L8 16"
+                          stroke="#44546f"
+                          stroke-width="2"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                        ></path>
+                      </g>
+                    </g>
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </TransitionGroup>
     </div>
   </div>
 </template>
