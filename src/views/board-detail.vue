@@ -18,6 +18,7 @@ const objColumn = reactive({ boardId: null, title: null })
 const currentBoard = computed(() => {
   return store.state.board.currentBoard
 })
+const localBoardTitle = ref(null)
 const getCurrentBoard = async () => {
   let loading
   try {
@@ -66,11 +67,38 @@ const handleAddColumn = async () => {
     if (loading) loading.close()
   }
 }
+const handleUpdateTitle = async () => {
+  let loading
+
+  try {
+    if (!currentBoard.value.title) {
+      notification.warning('Cần nhập tiêu đề bảng')
+      currentBoard.value.title = localBoardTitle.value
+      return
+    }
+    if (localBoardTitle.value === currentBoard.value.title) return
+    loading = getLoading()
+    await store.dispatch('board/updateBoard', {
+      title: currentBoard.value.title,
+      id: currentBoard.value._id,
+    })
+    localBoardTitle.value = currentBoard.value.title
+    notification.success('Cập nhật thành công')
+  } catch (error) {
+    notification.error(
+      error?.response?.data?.message || error?.message || 'Cập nhật tiêu đề bảng không thành công',
+    )
+  } finally {
+    if (loading) loading.close()
+  }
+}
 onMounted(async () => {
   await getCurrentBoard()
+  localBoardTitle.value = currentBoard.value.title
   window.addEventListener('click', handleClickOutside)
 })
 onUnmounted(() => window.addEventListener('click', handleClickOutside))
+
 console.log(router.currentRoute.value.params)
 </script>
 <template>
@@ -81,6 +109,7 @@ console.log(router.currentRoute.value.params)
       <!-- left -->
       <div class="flex gap-1">
         <input
+          @focusout="handleUpdateTitle"
           v-if="currentBoard"
           type="text"
           v-model="currentBoard.title"
@@ -165,7 +194,11 @@ console.log(router.currentRoute.value.params)
             :column="column"
             :key="column._id"
           />
-          <div class="bg-[#f1f2f4] h-fit p-1.5 rounded-md" ref="addColumnRef">
+          <div
+            class="h-fit p-1.5 rounded-md"
+            ref="addColumnRef"
+            :class="{ 'bg-[#f1f2f4]': isCreating }"
+          >
             <button
               @click="handleOpenFormAddColumn"
               :style="{ display: isCreating ? 'none' : 'block' }"
