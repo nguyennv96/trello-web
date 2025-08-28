@@ -1,5 +1,5 @@
 <script setup>
-import Headerr from '@/components/headerr-.vue'
+import Headerr from '@/components/headerr.vue'
 
 import { onMounted, onUnmounted, reactive, ref } from 'vue'
 import { RouterView } from 'vue-router'

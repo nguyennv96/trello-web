@@ -2,6 +2,7 @@
 import Card from '@/components/card.vue'
 import Column from '@/components/column.vue'
 import Dragablee from '@/components/dragablee.vue'
+import board from '@/store/modules/board'
 import { getLoading } from '@/utils/el-loading'
 import notification from '@/utils/el-notification'
 import { computed, onMounted, onUnmounted, reactive, ref } from 'vue'
@@ -10,10 +11,13 @@ import { useStore } from 'vuex'
 
 const router = useRouter()
 const addColumnRef = ref(null)
+const formInviRef = ref(null)
 const store = useStore()
+const isInviting = ref(false)
 
 const isCreating = ref(false)
 const objColumn = reactive({ boardId: null, title: null })
+const objInvite = reactive({ inviteeEmail: null, boardId: null })
 
 const currentBoard = computed(() => {
   return store.state.board.currentBoard
@@ -38,6 +42,9 @@ const getCurrentBoard = async () => {
 const handleClickOutside = (event) => {
   if (addColumnRef.value && !addColumnRef.value.contains(event.target)) {
     handleCloseFormAddColumn()
+  }
+  if (formInviRef.value && !formInviRef.value.contains(event.target)) {
+    handleCloseFormInvite()
   }
 }
 const handleOpenFormAddColumn = () => (isCreating.value = true)
@@ -90,6 +97,36 @@ const handleUpdateTitle = async () => {
     )
   } finally {
     if (loading) loading.close()
+  }
+}
+
+const handleOpenFormInvite = () => {
+  isInviting.value = true
+}
+const handleCloseFormInvite = () => {
+  isInviting.value = false
+}
+const handleInvite = async () => {
+  let loading
+  try {
+    if (!objInvite.inviteeEmail) {
+      notification.warning('Thiếu thông tin email')
+      return
+    }
+    loading = getLoading()
+    objInvite.boardId = currentBoard.value._id
+    console.log(objInvite)
+
+    await store.dispatch('invitation/inviteBoard', objInvite)
+    notification.success('Gửi yêu cầu thành công')
+    objInvite.inviteeEmail = null
+  } catch (error) {
+    notification.error(
+      error?.response?.data?.message || error?.message || 'Gửi yêu cầu không thành công',
+    )
+  } finally {
+    if (loading) loading.close()
+    handleCloseFormInvite()
   }
 }
 onMounted(async () => {
@@ -174,12 +211,70 @@ console.log(router.currentRoute.value.params)
         <button class="p-2 hover:bg-[#00000029] cursor-pointer">
           <img src="@/assets/images/people.svg" alt="" />
         </button>
-        <button
-          class="p-2 px-3 hover:bg-[rgba(0,0,0,0.6)] hover:text-[rgba(32,85,96,1)] bg-[rgba(32,85,96,1)] cursor-pointer flex justify-between rounded-sm"
-        >
-          <img src="@/assets/images/add-user.svg" class="mr-2 color-white" alt="" />
-          <span class="text-white text-sm">Chia sẻ</span>
-        </button>
+        <div ref="formInviRef" class="relative">
+          <button
+            @click="handleOpenFormInvite"
+            class="p-2 px-3 hover:bg-[rgba(0,0,0,0.6)] hover:text-[rgba(32,85,96,1)] bg-[rgba(32,85,96,1)] cursor-pointer flex justify-between rounded-sm"
+          >
+            <img src="@/assets/images/add-user.svg" class="mr-2 color-white" alt="" />
+            <span class="text-white text-sm">Chia sẻ</span>
+          </button>
+          <!-- Form invitation -->
+          <div
+            :style="{ visibility: isInviting ? 'visible' : 'hidden' }"
+            class="w-[300px] absolute bg-white py-3 rounded-sm shadow-2xl right-0 top-10 border-gray-200 px-3 z-10"
+          >
+            <header class="flex justify-between">
+              <button></button>
+
+              <h5 class="text-[#44546f] font-semibold text-sm">Chia sẻ bảng</h5>
+              <button @click="handleCloseFormInvite">
+                <svg
+                  width="20px"
+                  height="20px"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                  <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+                  <g id="SVGRepo_iconCarrier">
+                    <g id="Menu / Close_SM">
+                      <path
+                        id="Vector"
+                        d="M16 16L12 12M12 12L8 8M12 12L16 8M12 12L8 16"
+                        stroke="#44546f"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      ></path>
+                    </g>
+                  </g>
+                </svg>
+              </button>
+            </header>
+            <article class="text-[#44546f]">
+              <div>
+                <input
+                  placeholder="Nhập địa chỉ email ở đây"
+                  class="border-gray-200 border py-2 px-2 text-xs w-full rounded-sm focus:border-blue-600 outline-none"
+                  type="text"
+                  v-model="objInvite.inviteeEmail"
+                /><br />
+                <span class="text-xs">👋 Email là bắt buộc</span>
+              </div>
+
+              <div class="mt-1">
+                <button
+                  @click="handleInvite"
+                  class="bg-blue-600 text-white w-full py-1 text-sm rounded-sm"
+                >
+                  Chia sẻ
+                </button>
+              </div>
+            </article>
+          </div>
+        </div>
         <button class="p-2 hover:bg-[#00000029] cursor-pointer">
           <img src="@/assets/images/more.svg" alt="" />
         </button>

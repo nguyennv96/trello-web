@@ -34,12 +34,24 @@ const handleLogout = async () => {
     if (loading) loading.close()
   }
 }
-onMounted(() => {
+onMounted(async () => {
   window.addEventListener('click', handleClickOutsidev2)
+  await handleFetchInvitations()
 })
 onUnmounted(() => {
   window.removeEventListener('click', handleClickOutsidev2)
 })
+const handleFetchInvitations = async () => {
+  let loading
+  try {
+    await store.dispatch('invitation/fetchInvitations')
+  } catch (error) {
+    notification.error(
+      error?.response?.data?.message || error?.message || 'Không thể lấy danh sách thông báo',
+    )
+  } finally {
+  }
+}
 const handleToggleMenu = () => {
   isOpen.value = !isOpen.value
 }
