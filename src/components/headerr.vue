@@ -3,19 +3,23 @@ import { logout } from '@/apis/auth'
 import { StatusCodes } from '@/constants/status-code'
 import { getLoading } from '@/utils/el-loading'
 import notification from '@/utils/el-notification'
-import { onMounted, onUnmounted, reactive, ref } from 'vue'
+import { computed, onMounted, onUnmounted, reactive, ref } from 'vue'
 import { RouterView, useRouter } from 'vue-router'
 import { useStore } from 'vuex'
+import NotificationInviteBoard from './notification-invite-board.vue'
 const isOpen = ref(false)
 const menuRef = ref(null)
 const menuBoard = ref(null)
+const notificationsRef = ref(null)
 const store = useStore()
 const router = useRouter()
 
 const isOpenSelectBoardType = ref(false)
 const isOpenMenuCreateBoard = ref(false)
+const isOpenNotifications = ref(false)
 const objCreateBoard = reactive({ title: '', description: '', type: 'private' })
 
+const invitations = computed(() => store.state.invitation.invitations)
 const handleLogout = async () => {
   let loading
   try {
@@ -71,6 +75,9 @@ const handleClickOutsidev2 = (e) => {
     isOpenMenuCreateBoard.value = false
     isOpenSelectBoardType.value = false
   }
+  if (notificationsRef && !notificationsRef.value.contains(e.target)) {
+    handleCloseNotifications()
+  }
 }
 const handleToggleMenuSelectBoardType = () => {
   isOpenSelectBoardType.value = !isOpenSelectBoardType.value
@@ -114,6 +121,12 @@ const handleCreateBoard = () => {
   } finally {
     if (loading) loading.close()
   }
+}
+const handleCloseNotifications = () => {
+  isOpenNotifications.value = false
+}
+const handleOpenNotifications = () => {
+  isOpenNotifications.value = true
 }
 </script>
 <template>
@@ -429,22 +442,39 @@ const handleCreateBoard = () => {
     <!-- Right: User Menu -->
     <div class="flex items-center gap-4 w-1/5 justify-end">
       <!-- Notification Icon -->
-      <button class="relative p-1 hover:bg-gray-100 rounded-full">
-        <svg
-          class="w-6 h-6 text-gray-600"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          viewBox="0 0 24 24"
+      <div class="relative" ref="notificationsRef">
+        <button @click="handleOpenNotifications" class="p-1 hover:bg-gray-100 rounded-full">
+          <svg
+            class="w-6 h-6 text-gray-600"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M15 17h5l-1.405-1.405C18.79 14.79 18 13.42 18 12V8a6 6 0 10-12 0v4c0 1.42-.79 2.79-1.595 3.595L3 17h5m4 0v1a3 3 0 006 0v-1m-6 0h6"
+            />
+          </svg>
+          <span class="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full"></span>
+        </button>
+        <!-- notification list -->
+        <div
+          v-if="isOpenNotifications"
+          class="absolute w-80 right-full top-14 shadow-md p-1 rounded-md bg-white z-20 max-h-screen overflow-y-auto text-[#44546f]"
         >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            d="M15 17h5l-1.405-1.405C18.79 14.79 18 13.42 18 12V8a6 6 0 10-12 0v4c0 1.42-.79 2.79-1.595 3.595L3 17h5m4 0v1a3 3 0 006 0v-1m-6 0h6"
-          />
-        </svg>
-        <span class="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full"></span>
-      </button>
+          <div>
+            <p class="font-bold text-lg border-b-[1px] border-gray-200 py-3 px-2 mb-1">Thông báo</p>
+          </div>
+          <div v-if="invitations.length > 0" v-for="noti in invitations" class="mb-3">
+            <NotificationInviteBoard :data="noti" />
+          </div>
+          <div class="px-2 py-3" v-else>
+            <p><i>Không có thông báo</i></p>
+          </div>
+        </div>
+      </div>
 
       <!-- Avatar -->
       <div ref="menuRef" class="relative w-8 h-8" id="avatar">

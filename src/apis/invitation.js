@@ -13,3 +13,10 @@ export const invitations = () => {
     url: 'invitations',
   })
 }
+export const updateInvitations = (inviteId, data) => {
+  return serviceCommon({
+    method: 'put',
+    data: data,
+    url: `invitations/board/${inviteId}`,
+  })
+}

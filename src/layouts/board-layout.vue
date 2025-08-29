@@ -7,7 +7,7 @@ import { RouterView } from 'vue-router'
   <div class="w-screen h-screen">
     <Headerr></Headerr>
     <!-- main content -->
-    <div class="w-full h-[calc(100vh-49px)]">
+    <div class="w-full h-[calc(100vh-52px)]">
       <RouterView></RouterView>
     </div>
   </div>

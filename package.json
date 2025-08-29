@@ -19,7 +19,7 @@
     "@vue-dnd-kit/core": "^1.7.0",
     "@vueuse/core": "^13.6.0",
     "axios": "^1.11.0",
-    "dayjs": "^1.11.13",
+    "dayjs": "^1.11.15",
     "element-plus": "^2.10.6",
     "tailwindcss": "^4.1.11",
     "uuid": "^11.1.0",

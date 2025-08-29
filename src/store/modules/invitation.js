@@ -1,4 +1,4 @@
-import { invite, invitations } from '@/apis/invitation'
+import { invite, invitations, updateInvitations } from '@/apis/invitation'
 
 let emptyState = {}
 const invitation = {
@@ -9,6 +9,12 @@ const invitation = {
   mutations: {
     SET_INVITATIONS: (state, data) => {
       state.invitations = data
+    },
+    UPDATE_INVITATION: (state, data) => {
+      let indexInvitation = Array.from(state.invitations).findIndex(
+        (value) => value._id === data._id,
+      )
+      state.invitations[indexInvitation].boardInvitation.status = data.boardInvitation.status
     },
   },
   getters: {},
@@ -24,6 +30,16 @@ const invitation = {
       try {
         const res = await invitations()
         commit('SET_INVITATIONS', res.data)
+      } catch (error) {
+        throw error
+      }
+    },
+    async responseInvitation({ dispatch, commit }, payload) {
+      try {
+        let inviteId = payload.inviteId
+        let data = { status: payload.status }
+        const res = await updateInvitations(inviteId, data)
+        commit('UPDATE_INVITATION', res.data)
       } catch (error) {
         throw error
       }
