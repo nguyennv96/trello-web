@@ -32,13 +32,13 @@ const handleResponseInvitation = async (id, status) => {
       <p>Lúc {{ convertTohhmmDDMMYYYY(props.data.createdAt) }}</p>
       <button
         @click="() => handleResponseInvitation(props.data._id, 'ACCEPTED')"
-        class="bg-blue-600 text-white text-sm rounded-sm p-1.5 mr-1"
+        class="bg-blue-600 text-white text-xs rounded-sm p-1.5 mr-1"
       >
         Đồng ý
       </button>
       <button
         @click="() => handleResponseInvitation(props.data._id, 'REJECTED')"
-        class="bg-red-400 text-white text-sm rounded-sm p-1.5"
+        class="bg-red-400 text-white text-xs rounded-sm p-1.5"
       >
         Từ chối
       </button>

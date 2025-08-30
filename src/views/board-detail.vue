@@ -5,10 +5,12 @@ import Dragablee from '@/components/dragablee.vue'
 import board from '@/store/modules/board'
 import { getLoading } from '@/utils/el-loading'
 import notification from '@/utils/el-notification'
-import { computed, onMounted, onUnmounted, reactive, ref } from 'vue'
+import { computed, onMounted, onUnmounted, reactive, ref, getCurrentInstance } from 'vue'
 import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 
+const { appContext } = getCurrentInstance()
+const socket = appContext.config.globalProperties.$socket
 const router = useRouter()
 const addColumnRef = ref(null)
 const formInviRef = ref(null)
@@ -117,8 +119,9 @@ const handleInvite = async () => {
     objInvite.boardId = currentBoard.value._id
     console.log(objInvite)
 
-    await store.dispatch('invitation/inviteBoard', objInvite)
+    const invitation = await store.dispatch('invitation/inviteBoard', objInvite)
     notification.success('Gửi yêu cầu thành công')
+    socket.emit('FE_USER_INVITED_TO_BOARD', invitation)
     objInvite.inviteeEmail = null
   } catch (error) {
     notification.error(

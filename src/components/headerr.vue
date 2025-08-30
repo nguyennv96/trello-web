@@ -3,14 +3,18 @@ import { logout } from '@/apis/auth'
 import { StatusCodes } from '@/constants/status-code'
 import { getLoading } from '@/utils/el-loading'
 import notification from '@/utils/el-notification'
-import { computed, onMounted, onUnmounted, reactive, ref } from 'vue'
+import { computed, onMounted, onUnmounted, reactive, ref, getCurrentInstance } from 'vue'
 import { RouterView, useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 import NotificationInviteBoard from './notification-invite-board.vue'
+
 const isOpen = ref(false)
 const menuRef = ref(null)
 const menuBoard = ref(null)
+const hasNewNoti = ref(false)
 const notificationsRef = ref(null)
+const { appContext } = getCurrentInstance()
+const socket = appContext.config.globalProperties.$socket
 const store = useStore()
 const router = useRouter()
 
@@ -39,6 +43,10 @@ const handleLogout = async () => {
   }
 }
 onMounted(async () => {
+  socket.on('BE_USER_INVITED_TO_BOARD', async () => {
+    hasNewNoti.value = true
+    await handleFetchInvitations()
+  })
   window.addEventListener('click', handleClickOutsidev2)
   await handleFetchInvitations()
 })
@@ -127,6 +135,7 @@ const handleCloseNotifications = () => {
 }
 const handleOpenNotifications = () => {
   isOpenNotifications.value = true
+  hasNewNoti.value = false
 }
 </script>
 <template>
@@ -457,21 +466,26 @@ const handleOpenNotifications = () => {
               d="M15 17h5l-1.405-1.405C18.79 14.79 18 13.42 18 12V8a6 6 0 10-12 0v4c0 1.42-.79 2.79-1.595 3.595L3 17h5m4 0v1a3 3 0 006 0v-1m-6 0h6"
             />
           </svg>
-          <span class="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full"></span>
+          <span
+            v-if="hasNewNoti"
+            class="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full"
+          ></span>
         </button>
         <!-- notification list -->
         <div
           v-if="isOpenNotifications"
-          class="absolute w-80 right-full top-14 shadow-md p-1 rounded-md bg-white z-20 max-h-screen overflow-y-auto text-[#44546f]"
+          class="absolute w-80 right-full top-14 shadow-md p-1 rounded-md bg-white z-20 max-h-[500px] text-[#44546f]"
         >
           <div>
             <p class="font-bold text-lg border-b-[1px] border-gray-200 py-3 px-2 mb-1">Thông báo</p>
           </div>
-          <div v-if="invitations.length > 0" v-for="noti in invitations" class="mb-3">
-            <NotificationInviteBoard :data="noti" />
-          </div>
-          <div class="px-2 py-3" v-else>
-            <p><i>Không có thông báo</i></p>
+          <div class="h-[439px] overflow-y-auto my-scroll">
+            <div v-if="invitations.length > 0" v-for="noti in invitations" class="mb-3">
+              <NotificationInviteBoard :data="noti" />
+            </div>
+            <div class="px-2 py-3" v-else>
+              <p><i>Không có thông báo</i></p>
+            </div>
           </div>
         </div>
       </div>
@@ -558,4 +572,24 @@ const handleOpenNotifications = () => {
     </div>
   </header>
 </template>
-<style scoped></style>
+<style scoped>
+.my-scroll {
+  overflow-y: auto;
+  scrollbar-width: none; /* Firefox */
+}
+.my-scroll::-webkit-scrollbar {
+  width: 0; /* Chrome/Safari mặc định ẩn */
+}
+
+/* Khi hover thì hiện lại */
+.my-scroll:hover {
+  scrollbar-width: thin; /* Firefox */
+}
+.my-scroll:hover::-webkit-scrollbar {
+  width: 4px; /* Chrome/Safari */
+}
+.my-scroll:hover::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.3);
+  border-radius: 9999px;
+}
+</style>

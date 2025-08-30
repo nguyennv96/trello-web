@@ -22,6 +22,7 @@ const invitation = {
     async inviteBoard({ dispatch, commit }, payload) {
       try {
         const res = await invite(payload)
+        return res.data
       } catch (error) {
         throw error
       }
