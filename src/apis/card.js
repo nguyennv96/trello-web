@@ -7,3 +7,10 @@ export const createCard = (data) => {
     url: 'cards',
   })
 }
+export const updateCard = (id, data) => {
+  return serviceCommon({
+    method: 'put',
+    data: data,
+    url: `cards/${id}`,
+  })
+}

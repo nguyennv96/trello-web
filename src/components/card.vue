@@ -1,12 +1,21 @@
 <script setup>
 import { useDraggable } from '@vue-dnd-kit/core'
 import { computed } from 'vue'
+import { useStore } from 'vuex'
 
 const props = defineProps(['card'])
+const store = useStore()
 const data = computed(() => props.card)
+const handleSelectCard = () => {
+  console.log(data.value)
+  console.log(JSON.parse(JSON.stringify(data.value)))
+
+  store.commit('card/setCurrentCard', JSON.parse(JSON.stringify(data.value)))
+}
 </script>
 <template>
   <div
+    @click="handleSelectCard"
     v-if="data"
     class="bg-white text-[#44546f] shadow-md flex rounded-md mb-2 gap-1 px-1.5 py-2.5 card"
   >

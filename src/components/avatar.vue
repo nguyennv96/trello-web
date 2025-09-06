@@ -6,6 +6,7 @@ import { useStore } from 'vuex'
 const props = defineProps(['width', 'height', 'avatar', 'name'])
 const router = useRouter()
 const store = useStore()
+console.log(props.avatar)
 </script>
 <template>
   <div class="relative" :style="{ width: props.width, height: props.height }" id="avatar">
